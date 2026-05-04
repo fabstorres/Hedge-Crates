@@ -1,4 +1,4 @@
-import { internalMutation } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 import { httpAction } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
@@ -50,6 +50,13 @@ export const createCrate = internalMutation({
   handler: async (ctx, args) => {
     const crateId = await ctx.db.insert("crates", args);
     return await ctx.db.get(crateId);
+  },
+});
+
+export const getCrates = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("crates").order("desc").collect();
   },
 });
 

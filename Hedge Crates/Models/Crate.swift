@@ -17,5 +17,5 @@ struct Crate: Decodable, Identifiable, Hashable {
         case position
         case stance
         case observations
-    }
+}
 }
