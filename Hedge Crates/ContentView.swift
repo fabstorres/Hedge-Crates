@@ -1,21 +1,20 @@
-//
-//  ContentView.swift
-//  Hedge Crates
-//
-//  Created by Fabs on 29/04/26.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @State private var path = NavigationPath()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack(path: $path) {
+            UploadView(path: $path)
+                .navigationDestination(for: Route.self) { route in
+                    switch route {
+                    case .result(let crate):
+                        AnalysisResultView(crate: crate, path: $path)
+                    case .error(let message):
+                        AnalysisErrorView(message: message, path: $path)
+                    }
+                }
         }
-        .padding()
     }
 }
 

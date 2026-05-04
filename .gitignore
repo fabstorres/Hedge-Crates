@@ -1,0 +1,101 @@
+# macOS / System
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# Xcode / iOS
+build/
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.playground
+*.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+*.xcworkspace/xcshareddata/swiftpm/Package.resolved
+
+# Swift Package Manager
+.build/
+Packages/
+Package.pins
+.swiftpm/
+
+# CocoaPods
+Pods/
+# Uncomment if you don't want to track Podfile.lock
+# Podfile.lock
+
+# Carthage
+Carthage/Build/
+Carthage/Checkouts/
+# Uncomment if you use Carthage and don't want to track binaries
+# Carthage/Build/
+
+# Accio dependency management
+Dependencies/
+.accio/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+fastlane/.env
+
+# Code Injection
+iOSInjectionProject/
+
+# App thinning
+*.app.dSYM.zip
+
+# SwiftLint / SwiftFormat
+.swiftlint_cache
+.swiftformat_cache
+
+# Convex
+.convex/
+convex/_generated/
+
+# Node (if you have convex functions using npm/yarn)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+# Keep one lockfile tracked if you use Node for Convex, uncomment whichever you use:
+# !package-lock.json
+# !yarn.lock
+
+# Environment / Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets.json
+credentials.json
+GoogleService-Info.plist
+
+# Archives
+*.xcarchive
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace

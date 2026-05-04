@@ -6,6 +6,10 @@
 //
 
 import SwiftUI
+import ConvexMobile
+
+let convex = ConvexClient(deploymentUrl: "https://rugged-pheasant-484.convex.cloud")
+let crateService = CrateService(deploymentUrl: "https://rugged-pheasant-484.convex.site")
 
 @main
 struct Hedge_CratesApp: App {
