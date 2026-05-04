@@ -2,6 +2,7 @@ import SwiftUI
 
 struct UploadView: View {
     @Binding var path: NavigationPath
+    let token: String
 
     @State private var showPhotoPicker = false
     @State private var selectedImages: [UIImage] = []
@@ -76,7 +77,7 @@ struct UploadView: View {
         isLoading = true
         Task {
             do {
-                let crate = try await crateService.analyzeImages(selectedImages)
+                let crate = try await crateService.analyzeImages(selectedImages, guestToken: token)
                 await MainActor.run {
                     isLoading = false
                     path.append(Route.result(crate))

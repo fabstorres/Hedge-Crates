@@ -8,6 +8,7 @@ enum CrateServiceError: LocalizedError {
     case invalidResponse
     case decodingError(Error)
     case serverError(String)
+    case missingGuestToken
 
     var errorDescription: String? {
         switch self {
@@ -23,6 +24,8 @@ enum CrateServiceError: LocalizedError {
             return "Failed to decode response: \(error.localizedDescription)"
         case .serverError(let message):
             return message
+        case .missingGuestToken:
+            return "Missing guest token."
         }
     }
 }
@@ -36,7 +39,11 @@ actor CrateService {
         self.session = session
     }
 
-    func analyzeImages(_ images: [UIImage]) async throws -> Crate {
+    func analyzeImages(_ images: [UIImage], guestToken: String) async throws -> Crate {
+        guard !guestToken.isEmpty else {
+            throw CrateServiceError.missingGuestToken
+        }
+
         guard images.count <= 5 else {
             throw CrateServiceError.tooManyImages
         }
@@ -51,6 +58,10 @@ actor CrateService {
         request.setValue(
             "multipart/form-data; boundary=\(boundary)",
             forHTTPHeaderField: "Content-Type"
+        )
+        request.setValue(
+            "Bearer \(guestToken)",
+            forHTTPHeaderField: "Authorization"
         )
 
         var body = Data()

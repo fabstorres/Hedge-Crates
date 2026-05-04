@@ -1,7 +1,12 @@
-import { internalMutation, query } from "./_generated/server";
-import { httpAction } from "./_generated/server";
+import {
+  internalMutation,
+  internalQuery,
+  action,
+  httpAction,
+} from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
+import { verifyGuestToken } from "./guests";
 import { generateText, Output } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
@@ -46,22 +51,74 @@ export const createCrate = internalMutation({
     ),
     stance: v.union(v.literal("good"), v.literal("neutral"), v.literal("bad")),
     observations: v.array(v.string()),
+    guestId: v.optional(v.id("guests")),
   },
   handler: async (ctx, args) => {
-    const crateId = await ctx.db.insert("crates", args);
+    const { guestId, ...crateData } = args;
+    const crateId = await ctx.db.insert("crates", { ...crateData, guestId });
     return await ctx.db.get(crateId);
   },
 });
 
-export const getCrates = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("crates").order("desc").collect();
+export const getCratesInternal = internalQuery({
+  args: {
+    guestId: v.optional(v.id("guests")),
+  },
+  handler: async (ctx, { guestId }) => {
+    if (!guestId) return [];
+    return await ctx.db
+      .query("crates")
+      .withIndex("by_guest", (q) => q.eq("guestId", guestId))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const getCrates = action({
+  args: {
+    guestToken: v.optional(v.string()),
+  },
+  handler: async (ctx, { guestToken }): Promise<any[]> => {
+    if (!guestToken) return [];
+    const secret = process.env.GUEST_TOKEN_SECRET;
+    if (!secret) {
+      throw new Error("GUEST_TOKEN_SECRET is not configured");
+    }
+    const guestId = await verifyGuestToken(guestToken, secret);
+    if (!guestId) return [];
+    return await ctx.runQuery(internal.crates.getCratesInternal, { guestId });
   },
 });
 
 export const analyzeImages = httpAction(async (ctx, request) => {
   try {
+    const authHeader = request.headers.get("Authorization");
+    const guestToken = authHeader?.startsWith("Bearer ")
+      ? authHeader.slice(7)
+      : null;
+    if (!guestToken) {
+      return new Response(
+        JSON.stringify({ error: "Missing guest token." }),
+        { status: 401, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    const secret = process.env.GUEST_TOKEN_SECRET;
+    if (!secret) {
+      return new Response(
+        JSON.stringify({ error: "Server misconfiguration." }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    const guestId = await verifyGuestToken(guestToken, secret);
+    if (!guestId) {
+      return new Response(
+        JSON.stringify({ error: "Invalid guest token." }),
+        { status: 401, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
     const formData = await request.formData();
     const images: File[] = [];
 
@@ -116,10 +173,10 @@ export const analyzeImages = httpAction(async (ctx, request) => {
       }),
     });
 
-    const savedCrate = await ctx.runMutation(
-      internal.crates.createCrate,
-      crate,
-    );
+    const savedCrate = await ctx.runMutation(internal.crates.createCrate, {
+      ...crate,
+      guestId,
+    });
 
     return new Response(JSON.stringify(savedCrate), {
       status: 200,

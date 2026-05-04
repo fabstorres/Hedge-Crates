@@ -1,14 +1,21 @@
 import SwiftUI
 
 struct HistoryView: View {
-    @StateObject private var viewModel = HistoryViewModel()
+    @StateObject private var viewModel: HistoryViewModel
     @Binding var path: NavigationPath
+
+    init(token: String, path: Binding<NavigationPath>) {
+        _viewModel = StateObject(wrappedValue: HistoryViewModel(token: token))
+        _path = path
+    }
 
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            if viewModel.crates.isEmpty {
+            if viewModel.isLoading && viewModel.crates.isEmpty {
+                loadingView
+            } else if viewModel.crates.isEmpty {
                 emptyState
             } else {
                 ScrollView {
@@ -29,6 +36,23 @@ struct HistoryView: View {
                     }
                 }
             }
+        }
+        .task {
+            await viewModel.loadCrates()
+        }
+        .refreshable {
+            await viewModel.loadCrates()
+        }
+    }
+
+    private var loadingView: some View {
+        VStack(spacing: 16) {
+            ProgressView()
+                .scaleEffect(1.5)
+                .tint(.white)
+            Text("Loading...")
+                .font(.system(size: 16, weight: .medium, design: .default))
+                .foregroundStyle(.white)
         }
     }
 
@@ -106,5 +130,5 @@ struct HistoryView: View {
 }
 
 #Preview {
-    HistoryView(path: .constant(NavigationPath()))
+    HistoryView(token: "preview", path: .constant(NavigationPath()))
 }
