@@ -1,4 +1,6 @@
 import SwiftUI
+import Combine
+import ConvexMobile
 
 struct UploadView: View {
     @Binding var path: NavigationPath
@@ -7,6 +9,7 @@ struct UploadView: View {
     @State private var showPhotoPicker = false
     @State private var selectedImages: [UIImage] = []
     @State private var isLoading = false
+    @State private var credits: Int = 0
 
     var body: some View {
         ZStack {
@@ -32,23 +35,36 @@ struct UploadView: View {
                 Button(action: {
                     showPhotoPicker = true
                 }) {
-                    Text("Upload Screenshot (Beta)")
+                    Text(credits < 1 ? "No Credits Remaining" : "Upload Screenshot (Beta)")
                         .font(.system(size: 16, weight: .semibold, design: .default))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(red: 0.35, green: 0.55, blue: 0.35))
+                                .fill(credits < 1 ? Color.gray : Color(red: 0.35, green: 0.55, blue: 0.35))
                         )
                 }
                 .padding(.top, 32)
-                .disabled(isLoading)
+                .disabled(isLoading || credits < 1)
 
                 Spacer()
             }
             .padding(.horizontal, 24)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
+        .task {
+            let creditsStream = convex.subscribe(
+                to: "guests:getCredits",
+                with: ["guestToken": token],
+                yielding: Int.self
+            )
+            .replaceError(with: 0)
+            .values
+
+            for await newCredits in creditsStream {
+                self.credits = newCredits
+            }
         }
         .sheet(isPresented: $showPhotoPicker) {
             PhotoPicker(selectedImages: $selectedImages, isPresented: $showPhotoPicker) {

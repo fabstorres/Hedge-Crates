@@ -1,4 +1,4 @@
-import { internalMutation, internalQuery, action } from "./_generated/server";
+import { internalMutation, internalQuery, action, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
@@ -121,5 +121,20 @@ export const createGuest = action({
       throw new Error("GUEST_TOKEN_SECRET is not configured");
     }
     return await signGuestToken(guestId, secret);
+  },
+});
+
+export const getCredits = query({
+  args: { guestToken: v.optional(v.string()) },
+  handler: async (ctx, { guestToken }): Promise<number> => {
+    if (!guestToken) return 0;
+    const secret = process.env.GUEST_TOKEN_SECRET;
+    if (!secret) {
+      throw new Error("GUEST_TOKEN_SECRET is not configured");
+    }
+    const guestId = await verifyGuestToken(guestToken, secret);
+    if (!guestId) return 0;
+    const guest = await ctx.db.get(guestId);
+    return guest?.credits ?? 0;
   },
 });
