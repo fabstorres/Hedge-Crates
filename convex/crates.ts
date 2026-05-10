@@ -51,11 +51,16 @@ export const createCrate = internalMutation({
     ),
     stance: v.union(v.literal("good"), v.literal("neutral"), v.literal("bad")),
     observations: v.array(v.string()),
-    guestId: v.optional(v.id("guests")),
+    guestId: v.id("guests"),
   },
   handler: async (ctx, args) => {
     const { guestId, ...crateData } = args;
+    const guest = await ctx.db.get(guestId);
+    if (!guest || guest.credits < 1) {
+      throw new Error("Not enough tokens.");
+    }
     const crateId = await ctx.db.insert("crates", { ...crateData, guestId });
+    await ctx.db.patch(guestId, { credits: guest.credits - 1 });
     return await ctx.db.get(crateId);
   },
 });
@@ -116,6 +121,14 @@ export const analyzeImages = httpAction(async (ctx, request) => {
       return new Response(
         JSON.stringify({ error: "Invalid guest token." }),
         { status: 401, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    const guest = await ctx.runQuery(internal.guests.getGuestById, { guestId });
+    if (!guest || guest.credits < 1) {
+      return new Response(
+        JSON.stringify({ error: "Not enough tokens." }),
+        { status: 402, headers: { "Content-Type": "application/json" } },
       );
     }
 

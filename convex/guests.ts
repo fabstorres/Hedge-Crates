@@ -1,4 +1,4 @@
-import { internalMutation, action } from "./_generated/server";
+import { internalMutation, internalQuery, action } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
@@ -96,6 +96,13 @@ export async function verifyGuestToken(
   if (!valid) return null;
   return payload.slice("hc_guest:".length) as Id<"guests">;
 }
+
+export const getGuestById = internalQuery({
+  args: { guestId: v.id("guests") },
+  handler: async (ctx, { guestId }) => {
+    return await ctx.db.get(guestId);
+  },
+});
 
 export const insertGuest = internalMutation({
   args: {},
