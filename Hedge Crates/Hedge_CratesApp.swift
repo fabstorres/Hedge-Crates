@@ -8,8 +8,8 @@
 import SwiftUI
 import ConvexMobile
 
-let convex = ConvexClient(deploymentUrl: "https://rugged-pheasant-484.convex.cloud")
-let crateService = CrateService(deploymentUrl: "https://rugged-pheasant-484.convex.site")
+let convex = ConvexClient(deploymentUrl: Env.convexCloudURL)
+let crateService = CrateService(deploymentUrl: Env.convexSiteURL)
 
 @main
 struct Hedge_CratesApp: App {
