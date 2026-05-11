@@ -2,6 +2,11 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  users: defineTable({
+    credits: v.number(),
+    userId: v.string(),
+    guestId: v.optional(v.id("guests")),
+  }),
   guests: defineTable({
     credits: v.number(),
   }),
@@ -16,6 +21,7 @@ export default defineSchema({
     stance: v.union(v.literal("good"), v.literal("neutral"), v.literal("bad")),
     observations: v.array(v.string()),
     guestId: v.optional(v.id("guests")),
+    userId: v.optional(v.id("users")),
   })
     .index("by_guest", ["guestId"]),
 });
