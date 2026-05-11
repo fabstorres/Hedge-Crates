@@ -25,6 +25,7 @@ struct AnalysisResultView: View {
                     VStack(spacing: 16) {
                         riskCard
                         observationsCard
+                        seePremiumButton
                     }
                     .padding(.horizontal, 16)
                 }
@@ -167,6 +168,22 @@ struct AnalysisResultView: View {
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
                 )
         )
+    }
+
+    private var seePremiumButton: some View {
+        Button(action: {
+            path.append(Route.auth)
+        }) {
+            Text("See Premium Features")
+                .font(.system(size: 16, weight: .semibold, design: .default))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.white.opacity(0.12))
+                )
+        }
     }
 }
 

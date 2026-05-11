@@ -10,6 +10,7 @@
 		53B67CCD2FA1F23D006717F1 /* ConvexMobile in Frameworks */ = {isa = PBXBuildFile; productRef = 53B67CCC2FA1F23D006717F1 /* ConvexMobile */; };
 		53B67CD02FA7B3ED006717F1 /* ClerkKit in Frameworks */ = {isa = PBXBuildFile; productRef = 53B67CCF2FA7B3ED006717F1 /* ClerkKit */; };
 		53B67CD22FA7B3ED006717F1 /* ClerkKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 53B67CD12FA7B3ED006717F1 /* ClerkKitUI */; };
+		53C5230F2FB17784004C8ADA /* ClerkConvex in Frameworks */ = {isa = PBXBuildFile; productRef = 53C5230E2FB17784004C8ADA /* ClerkConvex */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 				53B67CCD2FA1F23D006717F1 /* ConvexMobile in Frameworks */,
 				53B67CD02FA7B3ED006717F1 /* ClerkKit in Frameworks */,
 				53B67CD22FA7B3ED006717F1 /* ClerkKitUI in Frameworks */,
+				53C5230F2FB17784004C8ADA /* ClerkConvex in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +79,7 @@
 				53B67CCC2FA1F23D006717F1 /* ConvexMobile */,
 				53B67CCF2FA7B3ED006717F1 /* ClerkKit */,
 				53B67CD12FA7B3ED006717F1 /* ClerkKitUI */,
+				53C5230E2FB17784004C8ADA /* ClerkConvex */,
 			);
 			productName = "Hedge Crates";
 			productReference = 53B67CBD2FA1F0E8006717F1 /* Hedge Crates.app */;
@@ -109,6 +112,7 @@
 			packageReferences = (
 				53B67CCB2FA1F23C006717F1 /* XCRemoteSwiftPackageReference "convex-swift" */,
 				53B67CCE2FA7B3ED006717F1 /* XCRemoteSwiftPackageReference "clerk-ios" */,
+				53C5230D2FB17784004C8ADA /* XCRemoteSwiftPackageReference "clerk-convex-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 53B67CBE2FA1F0E8006717F1 /* Products */;
@@ -362,6 +366,14 @@
 				minimumVersion = 1.1.1;
 			};
 		};
+		53C5230D2FB17784004C8ADA /* XCRemoteSwiftPackageReference "clerk-convex-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/clerk/clerk-convex-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -379,6 +391,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 53B67CCE2FA7B3ED006717F1 /* XCRemoteSwiftPackageReference "clerk-ios" */;
 			productName = ClerkKitUI;
+		};
+		53C5230E2FB17784004C8ADA /* ClerkConvex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53C5230D2FB17784004C8ADA /* XCRemoteSwiftPackageReference "clerk-convex-swift" */;
+			productName = ClerkConvex;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

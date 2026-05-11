@@ -30,6 +30,8 @@ struct ContentView: View {
                             AnalysisResultView(crate: crate, path: $analyzerPath)
                         case .error(let message):
                             AnalysisErrorView(message: message, path: $analyzerPath)
+                        case .auth:
+                            AuthView(path: $analyzerPath)
                         }
                     }
             }
@@ -45,6 +47,8 @@ struct ContentView: View {
                             AnalysisResultView(crate: crate, path: $historyPath)
                         case .error(let message):
                             AnalysisErrorView(message: message, path: $historyPath)
+                        case .auth:
+                            AuthView(path: $historyPath)
                         }
                     }
             }
