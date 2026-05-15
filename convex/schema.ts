@@ -6,7 +6,7 @@ export default defineSchema({
     credits: v.number(),
     userId: v.string(),
     guestId: v.optional(v.id("guests")),
-  }),
+  }).index("by_userId", ["userId"]),
   guests: defineTable({
     credits: v.number(),
   }),
